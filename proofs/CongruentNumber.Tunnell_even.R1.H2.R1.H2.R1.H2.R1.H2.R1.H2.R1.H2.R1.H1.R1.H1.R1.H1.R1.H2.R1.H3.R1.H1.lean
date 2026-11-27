@@ -8209,7 +8209,6 @@ structure RelativeLocalIdeleData where
               w.adicCompletion K ⊗[K] L) i ∈
           w.adicCompletionIntegers K
 omit [NumberField L] in
-@[ext]
 theorem RelativeLocalIdeleData.ext
     {a b : RelativeLocalIdeleData (K := K) (L := L)}
     (hinfinite : a.infinite = b.infinite)
@@ -10406,7 +10405,6 @@ structure RelativeFiniteIdeleData where
 omit [NumberField L] in
  
 
-@[ext]
 theorem RelativeFiniteIdeleData.ext
     {a b : RelativeFiniteIdeleData (K := K) (L := L)}
     (hfinite : a.finite = b.finite) :

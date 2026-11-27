@@ -26,6 +26,11 @@ def H2 : Prop :=
      (powMonoidHom p:E→*E).range.index=p^(Nat.card (InfinitePlace D)+F.card)
 
 def H3 : Prop :=
+  (∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+    [FiniteDimensional D N][IsGalois D N][IsCyclic Gal(N/D)],
+    let A:=AdeleRing (𝓞 D) D
+    (Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=A⊗[D]N))).range=⊤ →
+    Module.finrank D N=1) →
   ∀(D:Type)[Field D][NumberField D](E:IntermediateField D (SeparableClosure D))
    [FiniteDimensional D E][IsGalois D E],
    let p:=Module.finrank D E
@@ -63,7 +68,9 @@ theorem factor {X A:Type} [CommGroup X] [CommGroup A] (j:X→*A) (U J:Subgroup A
   rw [←Subgroup.relIndex_top_right P,←h2,Subgroup.relIndex_sup_left,Subgroup.relIndex_inf_mul_relIndex,inf_of_le_left h1]
 
 theorem main : H1 → H2 → H3 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H1_R1_H3_R1.H1 := by
-  intro places units aux D _ _ N _ _
+  intro places units aux lower
+  have aux := aux lower
+  intro D _ _ N _ _
   dsimp only
   intro hp hmu
   letI : NumberField N:=NumberField.of_module_finite D N

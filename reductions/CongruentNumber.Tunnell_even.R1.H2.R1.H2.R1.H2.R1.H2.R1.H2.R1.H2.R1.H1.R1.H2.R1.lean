@@ -15,21 +15,31 @@ def H1 : Prop :=
    let q:=QuotientGroup.mk' (Units.map (Algebra.TensorProduct.includeRight (R:=D) (A:=A) (B:=N)).toMonoidHom).range
    let a(s:Gal(N/D)):=Units.mapEquiv (Algebra.TensorProduct.congr (AlgEquiv.refl (R:=A) (A₁:=A)) s).toMulEquiv
    P.index=Module.finrank D N ∧ ∀ z:Tˣ,(∏ s:Gal(N/D),q (a s z))=1 → ∃ y:Tˣ,q (a g y / y)=q z) →
-  ∀ (D N:Type) [Field D] [NumberField D] [Field N] [NumberField N] [Algebra D N]
-    [FiniteDimensional D N] [IsAbelianGalois D N],
-  let A := AdeleRing (𝓞 D) D
-  let P := (Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=A ⊗[D] N))).range
-  Nonempty ((Aˣ ⧸ P) ≃* Gal(N/D))
+  (∀ (D M:Type) [Field D] [NumberField D] [Field M] [NumberField M] [Algebra D M]
+  [FiniteDimensional D M] [IsAbelianGalois D M], let A:=AdeleRing (𝓞 D) D
+  let P (B:Type) [Field B] [Algebra D B] := (Units.map (algebraMap D A).toMonoidHom).range ⊔
+    (Units.map (Algebra.norm A (S:=A⊗[D]B))).range
+  Nonempty ((Aˣ ⧸ P M) ≃* Gal(M/D)) ∧ (P M).index=Module.finrank D M ∧ ∀ E F:IntermediateField D M, E⊔F=⊤ → P M=P E ⊓ P F) ∧ (∀ (m : ℕ), (2 < m) → ∀ (v:HeightOneSpectrum (𝓞 ℚ)) (n:ℕ),
+  let A:=AdeleRing (𝓞 ℚ) ℚ
+  ∀ z:Aˣ, z.val.1=1 → (∀ w:HeightOneSpectrum (𝓞 ℚ), w≠v → z.val.2 w=1) →
+  v.asIdeal.absNorm.Coprime m → -WithZero.log (Valued.v (z.val.2 v))=(n:ℤ) →
+  z∈(Units.map (algebraMap ℚ A).toMonoidHom).range ⊔
+    (Units.map (Algebra.norm A (S:=A⊗[ℚ]CyclotomicField m ℚ))).range →
+  m ∣ v.asIdeal.absNorm ^ n - 1)
+
 
 def H2 : Prop :=
-  (∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
-   [FiniteDimensional D N][IsGalois D N](g:Gal(N/D)),(∀ s,s∈Subgroup.zpowers g) →
-   let A:=AdeleRing (𝓞 D) D
-   let T:=A⊗[D]N
-   let P:=(Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=T))).range
-   let q:=QuotientGroup.mk' (Units.map (Algebra.TensorProduct.includeRight (R:=D) (A:=A) (B:=N)).toMonoidHom).range
-   let a(s:Gal(N/D)):=Units.mapEquiv (Algebra.TensorProduct.congr (AlgEquiv.refl (R:=A) (A₁:=A)) s).toMulEquiv
-   P.index=Module.finrank D N ∧ ∀ z:Tˣ,(∏ s:Gal(N/D),q (a s z))=1 → ∃ y:Tˣ,q (a g y / y)=q z) →
+  (∀ (D M:Type) [Field D] [NumberField D] [Field M] [NumberField M] [Algebra D M]
+  [FiniteDimensional D M] [IsAbelianGalois D M], let A:=AdeleRing (𝓞 D) D
+  let P (B:Type) [Field B] [Algebra D B] := (Units.map (algebraMap D A).toMonoidHom).range ⊔
+    (Units.map (Algebra.norm A (S:=A⊗[D]B))).range
+  (P M).index=Module.finrank D M ∧ ∀ E F:IntermediateField D M, E⊔F=⊤ → P M=P E ⊓ P F) → (∀ (m : ℕ), (2 < m) → ∀ (v:HeightOneSpectrum (𝓞 ℚ)) (n:ℕ),
+  let A:=AdeleRing (𝓞 ℚ) ℚ
+  ∀ z:Aˣ, z.val.1=1 → (∀ w:HeightOneSpectrum (𝓞 ℚ), w≠v → z.val.2 w=1) →
+  v.asIdeal.absNorm.Coprime m → -WithZero.log (Valued.v (z.val.2 v))=(n:ℤ) →
+  z∈(Units.map (algebraMap ℚ A).toMonoidHom).range ⊔
+    (Units.map (Algebra.norm A (S:=A⊗[ℚ]CyclotomicField m ℚ))).range →
+  m ∣ v.asIdeal.absNorm ^ n - 1) →
   ∀ (D N:Type) [Field D] [NumberField D] [Field N] [NumberField N] [Algebra D N]
     [FiniteDimensional D N] [IsAbelianGalois D N] (v : HeightOneSpectrum (𝓞 D)),
   let A := AdeleRing (𝓞 D) D
@@ -41,6 +51,7 @@ def H2 : Prop :=
     ∀ (x:Vˣ) (z:Aˣ),z.val.1=1 → z.val.2 v=x.val →
       (∀ w:HeightOneSpectrum (𝓞 D),w≠v → z.val.2 w=1) →
       (z∈P ↔ ∃ y:(t.adicCompletion N)ˣ,Algebra.norm V (y:t.adicCompletion N)=x.val)
+
 
 def H3 : Prop :=
   ∀ (D N:Type) [Field D] [NumberField D] [Field N] [NumberField N] [Algebra D N]
@@ -55,10 +66,10 @@ def H3 : Prop :=
 theorem main : H1 → H2 → H3 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1.H2 := by
   intro makeGroup makeKernel product classes
   have group:=makeGroup classes
-  have localKer:=makeKernel classes
+  have localKer := makeKernel (fun D N _ _ _ _ _ _ _ => (group.1 D N).2) group.2
   classical
   intro D N _ _ _ _ _ _ _ hc
-  obtain ⟨e⟩ := group D N
+  obtain ⟨e⟩ := (group.1 D N).1
   let A := AdeleRing (𝓞 D) D
   let P := (Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=A ⊗[D] N))).range
   let q := QuotientGroup.mk' P

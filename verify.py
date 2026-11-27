@@ -54,7 +54,7 @@ def verify(root, base, output, jobs):
         log = logs / (name + ".log")
         with log.open("w", encoding="utf-8") as stream:
             result = subprocess.run(
-                [lean, "-j1", "--root=" + str(source), "-o", str(obj),
+                [lean, "-j1", "-DmaxHeartbeats=1600000", "--root=" + str(source), "-o", str(obj),
                  str((source / path).with_suffix(".lean"))],
                 cwd=base, env=environment, stdout=stream, stderr=subprocess.STDOUT,
             )

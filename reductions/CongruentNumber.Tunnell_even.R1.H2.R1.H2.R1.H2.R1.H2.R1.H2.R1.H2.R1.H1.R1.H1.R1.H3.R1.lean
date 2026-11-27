@@ -8,6 +8,11 @@ open scoped NumberField TensorProduct Classical
 noncomputable section
 
 def H1 : Prop :=
+  (∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+    [FiniteDimensional D N][IsGalois D N][IsCyclic Gal(N/D)],
+    let A:=AdeleRing (𝓞 D) D
+    (Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=A⊗[D]N))).range=⊤ →
+    Module.finrank D N=1) →
   ∀(D:Type)[Field D][NumberField D](E:IntermediateField D (SeparableClosure D))
    [FiniteDimensional D E][IsGalois D E],
    let p:=Module.finrank D E
@@ -44,7 +49,9 @@ def H2 : Prop :=
      U S T ≤ (Units.map (Algebra.norm A (S:=A⊗[D]E))).range
 
 theorem main : H1 → H2 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H1_R1.H3 := by
-  intro aux norms D N _ _ _ _ _ _ _ hp hmu
+  intro aux norms lower
+  have aux := aux lower
+  intro D N _ _ _ _ _ _ _ hp hmu
   let i : N →ₐ[D] SeparableClosure D := IsSepClosed.lift
   let E := i.fieldRange
   let e : N ≃ₐ[D] E := AlgHom.equivFieldRange i

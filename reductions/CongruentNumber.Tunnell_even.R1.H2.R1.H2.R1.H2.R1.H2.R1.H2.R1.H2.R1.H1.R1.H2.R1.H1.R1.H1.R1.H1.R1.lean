@@ -20,29 +20,66 @@ def H2 : Prop :=
   let ev (m:ℕ+) := Units.map (((Pi.evalRingHom (fun i:ℕ+ => ZMod (i:ℕ)) m).comp Z.subtype).toMonoidHom)
   let A:=AdeleRing (𝓞 ℚ) ℚ
   ∃ v:Aˣ →* Zˣ, Function.Surjective v ∧ (∀ x:ℚˣ, v (Units.map (algebraMap ℚ A).toMonoidHom x)=1) ∧
+  (∀ (m:ℕ+) (p:HeightOneSpectrum (𝓞 ℚ)) (n:ℕ) (z:Aˣ), z.val.1=1 →
+    (∀ w:HeightOneSpectrum (𝓞 ℚ), w≠p → z.val.2 w=1) → p.asIdeal.absNorm.Coprime m.val →
+    -WithZero.log (Valued.v (z.val.2 p))=(n:ℤ) → ((ev m (v z)).val:ZMod m.val)=(p.asIdeal.absNorm:ZMod m.val)^n) ∧
   ∀ (F:Type) [Field F] [NumberField F] (m:ℕ+),
     (v.comp (Units.map (Algebra.norm A (S:=A⊗[ℚ]F)))).range.map (ev m)=Subgroup.closure {a:(ZMod (m:ℕ))ˣ | ∃ v:HeightOneSpectrum (𝓞 F), (a:ZMod (m:ℕ))=v.asIdeal.absNorm}
+
 
 def H3 : Prop :=
   let Z := (Int.castRingHom (∀ n:ℕ+,ZMod (n:ℕ))).range.topologicalClosure
   let ev (m:ℕ+) := Units.map (((Pi.evalRingHom (fun i:ℕ+ => ZMod (i:ℕ)) m).comp Z.subtype).toMonoidHom)
   ∀ (S T:Subgroup Zˣ), (∀ m:ℕ+, S.map (ev m)=T.map (ev m)) → closure (S : Set Zˣ)=closure (T : Set Zˣ)
 
-theorem main : H1 → H2 → H3 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H2_R1_H1_R1_H1_R1.H1 := by
-  rintro ⟨d,cd,sd,gal⟩ ⟨v,sv,kill,norms⟩ levels
-  refine ⟨d,cd,sd,v,sv,kill,?_⟩
-  intro H hi F
-  letI := hi
-  let Ω:=SeparableClosure ℚ
-  letI : IsGalois ℚ Ω := @IsSepClosure.isGalois ℚ _ Ω _ ((separableClosure ℚ (AlgebraicClosure ℚ)).algebra)
-    (separableClosure.isSepClosure ℚ (AlgebraicClosure ℚ))
-  letI : FiniteDimensional ℚ F := (InfiniteGalois.isOpen_iff_finite F).mp (by
-    change IsOpen (((IntermediateField.fixedField H.toSubgroup).fixingSubgroup : Subgroup (Gal(SeparableClosure ℚ/ℚ))) : Set (Gal(SeparableClosure ℚ/ℚ)))
-    rw [InfiniteGalois.fixingSubgroup_fixedField H]
-    exact H.toSubgroup.isOpen_of_isClosed_of_finiteIndex H.isClosed')
-  letI : NumberField F := NumberField.of_module_finite ℚ F
-  apply levels
-  intro m
-  exact (norms F m).trans (gal H hi m).symm
+def H4 : Prop :=
+  ∀ (m : ℕ), (2 < m) → let F:=CyclotomicField m ℚ
+  ∀ (p:HeightOneSpectrum (𝓞 F)), p.asIdeal.absNorm.Coprime m → (p.asIdeal.absNorm:ZMod m)=1
+
+theorem main : H1 → H2 → H3 → H4 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H2_R1_H1_R1_H1_R1.H1 := by
+  rintro ⟨d,cd,sd,gal⟩ ⟨v,sv,kill,point,norms⟩ levels cyclo
+  constructor
+  ·
+    refine ⟨d,cd,sd,v,sv,kill,?_⟩
+    intro H hi F
+    letI := hi
+    let Ω:=SeparableClosure ℚ
+    letI : IsGalois ℚ Ω := @IsSepClosure.isGalois ℚ _ Ω _ ((separableClosure ℚ (AlgebraicClosure ℚ)).algebra)
+      (separableClosure.isSepClosure ℚ (AlgebraicClosure ℚ))
+    letI : FiniteDimensional ℚ F := (InfiniteGalois.isOpen_iff_finite F).mp (by
+      change IsOpen (((IntermediateField.fixedField H.toSubgroup).fixingSubgroup : Subgroup (Gal(SeparableClosure ℚ/ℚ))) : Set (Gal(SeparableClosure ℚ/ℚ)))
+      rw [InfiniteGalois.fixingSubgroup_fixedField H]
+      exact H.toSubgroup.isOpen_of_isClosed_of_finiteIndex H.isClosed')
+    letI : NumberField F := NumberField.of_module_finite ℚ F
+    apply levels
+    intro m
+    exact (norms F m).trans (gal H hi m).symm
+  · intro m hm p n A z real away cop ord hz
+    let M : ℕ+ := ⟨m,by omega⟩
+    let F:=CyclotomicField m ℚ
+    let Z:=(Int.castRingHom (∀ i:ℕ+,ZMod (i:ℕ))).range.topologicalClosure
+    let ev:=Units.map (((Pi.evalRingHom (fun i:ℕ+ => ZMod (i:ℕ)) M).comp Z.subtype).toMonoidHom)
+    let s:=ev.comp v
+    have zero : Subgroup.closure {a:(ZMod m)ˣ | ∃ w:HeightOneSpectrum (𝓞 F), (a:ZMod m)=w.asIdeal.absNorm} ≤ ⊥ := by
+      rw [Subgroup.closure_le]
+      rintro a ⟨w,eq⟩
+      have hc : w.asIdeal.absNorm.Coprime m := (ZMod.isUnit_iff_coprime _ _).mp (eq ▸ a.isUnit)
+      exact Units.ext (eq.trans (cyclo m hm w hc))
+    have small : (Units.map (algebraMap ℚ A).toMonoidHom).range ⊔
+        (Units.map (Algebra.norm A (S:=A⊗[ℚ]F))).range ≤ s.ker := by
+      apply sup_le
+      · rintro _ ⟨x,rfl⟩
+        exact (congrArg ev (kill x)).trans ev.map_one
+      · rintro _ ⟨x,rfl⟩
+        apply zero
+        exact (norms F M).le ⟨_,⟨x,rfl⟩,rfl⟩
+    have one : s z=1 := small hz
+    have val := point M p n z real away cop ord
+    change (s z).val=(p.asIdeal.absNorm:ZMod m)^n at val
+    rw [one,Units.val_one] at val
+    have pos : 1 ≤ p.asIdeal.absNorm ^ n := Nat.pos_of_ne_zero (pow_ne_zero n (Ideal.absNorm_eq_zero_iff.not.mpr p.ne_bot))
+    apply (ZMod.natCast_eq_zero_iff _ _).mp
+    rw [Nat.cast_sub pos,Nat.cast_pow,Nat.cast_one]
+    exact sub_eq_zero.mpr val.symm
 
 end OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H2_R1_H1_R1_H1_R1_H1_R1

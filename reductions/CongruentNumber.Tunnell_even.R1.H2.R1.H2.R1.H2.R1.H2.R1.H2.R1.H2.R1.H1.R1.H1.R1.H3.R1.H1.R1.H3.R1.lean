@@ -21,6 +21,11 @@ def H1 : Prop :=
      (∀ v:V,v.asIdeal ∣ Ideal.span {(p:𝓞 D)} → v∈B) ∧ j.range⊔J B=⊤
 
 def H2 : Prop :=
+  (∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+    [FiniteDimensional D N][IsGalois D N][IsCyclic Gal(N/D)],
+    let A:=AdeleRing (𝓞 D) D
+    (Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=A⊗[D]N))).range=⊤ →
+    Module.finrank D N=1) →
   ∀(D:Type)[Field D][NumberField D](E:IntermediateField D (SeparableClosure D))
    [FiniteDimensional D E][IsGalois D E],
    let p:=Module.finrank D E
@@ -49,7 +54,9 @@ def H3 : Prop :=
        (∀ v∈S,∃ y:v.adicCompletion D,y^p=(x.val.val:v.adicCompletion D)) → ∃ y:W,y^p=x) → (U S T).comap j=(powMonoidHom p:W→*W).range.map W.subtype)
 
 theorem main : H1 → H2 → H3 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H1_R1_H3_R1_H1_R1.H3 := by
-  intro seed separate principal D _ _ E _ _
+  intro seed separate principal lower
+  have separate := separate lower
+  intro D _ _ E _ _
   dsimp only
   intro hp hmu
   letI : NumberField E := NumberField.of_module_finite D E

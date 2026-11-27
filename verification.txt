@@ -1,0 +1,17 @@
+Lean check started at 15:48:21 UTC
+'TunnellEvenOriginal.tunnell_even' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+Lean check started at 15:50:17 UTC
+replaying TunnellEvenOriginal
+Lean check started at 15:50:22 UTC
+replaying TunnellCMRankVanishing
+Lean check started at 15:50:29 UTC
+replaying TunnellEvenCriticalBridge
+Lean check started at 15:50:34 UTC
+replaying TunnellGlobalRankObstruction
+Lean check started at 15:50:38 UTC
+replaying TunnellEvenWinding
+All five leanchecker invocations exited with code 0.
+
+Lean check started at 16:02:58 UTC
+'TunnellEvenExactStatement' depends on axioms: [propext, Classical.choice, Quot.sound]

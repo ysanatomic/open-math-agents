@@ -1,0 +1,34 @@
+name: Verify the even case of Tunnell's theorem
+on:
+  push:
+    branches: [tunnell-even-public-verification]
+permissions:
+  contents: read
+jobs:
+  proof:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install the pinned Lean toolchain
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl -fsSL --retry 3 -o elan.tar.gz https://github.com/leanprover/elan/releases/download/v4.4.0/elan-x86_64-unknown-linux-gnu.tar.gz
+          echo '0e8250aa2be86c7af929ade68db617af9edc8b9ccf6eaf5ece228250d0d032e2  elan.tar.gz' | sha256sum --check
+          tar -xzf elan.tar.gz elan-init
+          ./elan-init -y --default-toolchain none --no-modify-path
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Build the pinned formal-conjectures dependencies
+        run: |
+          base="$RUNNER_TEMP/formal-conjectures"
+          git init -q "$base"
+          git -C "$base" fetch -q --depth 1 https://github.com/google-deepmind/formal-conjectures.git 9097e2f90e66d2f6244209cb1c07f7120d17ec53
+          git -C "$base" checkout -q --detach FETCH_HEAD
+          cd "$base"
+          lake exe cache get Mathlib
+          lake exe cache clean!
+          lake build +Mathlib:olean +FormalConjectures.Wikipedia.CongruentNumber:olean
+      - name: Compile the proof from source and replay the kernel check
+        run: python3 -u verify.py --base "$RUNNER_TEMP/formal-conjectures" --build-dir "$RUNNER_TEMP/tunnell-build" --jobs 2

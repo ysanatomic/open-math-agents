@@ -23,6 +23,11 @@ def H1 : Prop :=
       ∃ y:(v.val.adicCompletionIntegers D)ˣ, ((y.val.val:v.val.adicCompletion D)^p)*(x.val.val:v.val.adicCompletion D)=(u v).val.val)
 
 def H2 : Prop :=
+  (∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+    [FiniteDimensional D N][IsGalois D N][IsCyclic Gal(N/D)],
+    let A:=AdeleRing (𝓞 D) D
+    (Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=A⊗[D]N))).range=⊤ →
+    Module.finrank D N=1) →
   ∀(D:Type)[Field D][NumberField D](p:ℕ),p.Prime → (primitiveRoots p D).Nonempty →
    let V:=HeightOneSpectrum (𝓞 D)
    let A:=AdeleRing (𝓞 D) D
@@ -35,7 +40,9 @@ def H2 : Prop :=
        (∀ v∈S,∃ y:v.adicCompletion D,y^p=(x.val.val:v.adicCompletion D)) → ∃ y:W,y^p=x)
 
 theorem main : H1 → H2 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H1_R1_H3_R1_H1_R1_H3_R1.H2 := by
-  intro choose detect D _ _ E _ _
+  intro choose detect lower
+  have detect := detect lower
+  intro D _ _ E _ _
   dsimp only
   intro hp hmu B
   obtain ⟨S,T,hBS,split,hd,hc,hs,hJ,sur⟩:=choose D E hp hmu B

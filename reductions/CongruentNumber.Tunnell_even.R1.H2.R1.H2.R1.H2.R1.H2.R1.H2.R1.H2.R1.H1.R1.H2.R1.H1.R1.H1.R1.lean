@@ -67,7 +67,7 @@ private theorem finite_test {Z : Type*} [CommGroup Z] [TopologicalSpace Z] [IsTo
   rw [←eq, h, eq]
 
 def H1 : Prop :=
-  let R := ∀ n:ℕ+,ZMod (n:ℕ)
+  (let R := ∀ n:ℕ+,ZMod (n:ℕ)
   let Z := (Int.castRingHom R).range.topologicalClosure
   let G := Gal(SeparableClosure ℚ/ℚ)
   let A := AdeleRing (𝓞 ℚ) ℚ
@@ -75,7 +75,14 @@ def H1 : Prop :=
   ∃ v:Aˣ →* Zˣ, Function.Surjective v ∧ (∀ x:ℚˣ, v (Units.map (algebraMap ℚ A).toMonoidHom x)=1) ∧
   ∀ H : ClosedSubgroup G, H.toSubgroup.FiniteIndex →
     let F:=IntermediateField.fixedField H.toSubgroup
-    closure ((v.comp (Units.map (Algebra.norm A (S:=A⊗[ℚ]F)))).range : Set Zˣ)=closure (H.toSubgroup.map d : Set Zˣ)
+    closure ((v.comp (Units.map (Algebra.norm A (S:=A⊗[ℚ]F)))).range : Set Zˣ)=closure (H.toSubgroup.map d : Set Zˣ)) ∧ (∀ (m : ℕ), (2 < m) → ∀ (v:HeightOneSpectrum (𝓞 ℚ)) (n:ℕ),
+  let A:=AdeleRing (𝓞 ℚ) ℚ
+  ∀ z:Aˣ, z.val.1=1 → (∀ w:HeightOneSpectrum (𝓞 ℚ), w≠v → z.val.2 w=1) →
+  v.asIdeal.absNorm.Coprime m → -WithZero.log (Valued.v (z.val.2 v))=(n:ℤ) →
+  z∈(Units.map (algebraMap ℚ A).toMonoidHom).range ⊔
+    (Units.map (Algebra.norm A (S:=A⊗[ℚ]CyclotomicField m ℚ))).range →
+  m ∣ v.asIdeal.absNorm ^ n - 1)
+
 
 def H2 : Prop :=
   let R := ∀ n:ℕ+,ZMod (n:ℕ)
@@ -83,17 +90,9 @@ def H2 : Prop :=
   (∃ f : Zˣ →* Multiplicative Z, Continuous f ∧ Function.Surjective f) ∧
     ∀ n:ℕ, 0<n → IsOpen ((powMonoidHom n : Multiplicative Z →* Multiplicative Z).range : Set (Multiplicative Z))
 
-def H3 : Prop :=
-  ∀ (m : ℕ), (2 < m) → ∀ (v:HeightOneSpectrum (𝓞 ℚ)) (n:ℕ),
-  let A:=AdeleRing (𝓞 ℚ) ℚ
-  ∀ z:Aˣ, z.val.1=1 → (∀ w:HeightOneSpectrum (𝓞 ℚ), w≠v → z.val.2 w=1) →
-  v.asIdeal.absNorm.Coprime m → -WithZero.log (Valued.v (z.val.2 v))=(n:ℤ) →
-  z∈(Units.map (algebraMap ℚ A).toMonoidHom).range ⊔
-    (Units.map (Algebra.norm A (S:=A⊗[ℚ]CyclotomicField m ℚ))).range →
-  m ∣ v.asIdeal.absNorm ^ n - 1
 
-theorem main : H1 → H2 → H3 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H2_R1_H1_R1.H1 := by
-  rintro ⟨d,cd,sd,v,sv,kill,close⟩ ⟨⟨f,cf,sf⟩,powers⟩ obstruction
+theorem main : H1 → H2 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1_H2_R1_H1_R1.H1 := by
+  rintro ⟨⟨d,cd,sd,v,sv,kill,close⟩,obstruction⟩ ⟨⟨f,cf,sf⟩,powers⟩
   refine ⟨⟨f.comp d,cf.comp cd,sf.comp sd,f.comp v,sf.comp sv,?_,?_⟩,obstruction⟩
   · intro x
     exact (congrArg f (kill x)).trans f.map_one

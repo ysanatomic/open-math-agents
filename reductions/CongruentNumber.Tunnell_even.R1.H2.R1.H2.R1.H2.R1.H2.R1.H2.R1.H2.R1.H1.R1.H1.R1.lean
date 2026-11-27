@@ -27,6 +27,11 @@ def H2 : Prop :=
   Nonempty (T≃ₐ[M]AdeleRing (𝓞 M) M)
 
 def H3 : Prop :=
+  (∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+    [FiniteDimensional D N][IsGalois D N][IsCyclic Gal(N/D)],
+    let A:=AdeleRing (𝓞 D) D
+    (Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=A⊗[D]N))).range=⊤ →
+    Module.finrank D N=1) →
   ∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
    [FiniteDimensional D N][IsGalois D N],(Module.finrank D N).Prime →
    (primitiveRoots (Module.finrank D N) D).Nonempty →
@@ -282,7 +287,12 @@ theorem tensorProduct_isField_of_finrank_coprime
 
 
 end Disjoint
-theorem prime_degree (base : H2) (kummer : H3) (K L : Type)
+theorem prime_degree (base : H2) (kummer : ∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+   [FiniteDimensional D N][IsGalois D N],(Module.finrank D N).Prime →
+   (primitiveRoots (Module.finrank D N) D).Nonempty →
+   let A:=AdeleRing (𝓞 D) D
+   let T:=A⊗[D]N
+   ((Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=T))).range).index ∣ Module.finrank D N) (K L : Type)
     [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L] [FiniteDimensional K L] [IsGalois K L]
     (p : ℕ) (hp : p.Prime) (hdegree : Module.finrank K L = p) : ((Units.map (algebraMap K (AdeleRing (𝓞 K) K)).toMonoidHom).range ⊔ (Units.map (Algebra.norm (AdeleRing (𝓞 K) K) (S:=(AdeleRing (𝓞 K) K) ⊗[K] L))).range).index ∣ p := by
   letI : NeZero p := ⟨hp.ne_zero⟩
@@ -329,7 +339,12 @@ theorem prime_degree (base : H2) (kummer : H3) (K L : Type)
   rw [hd,hdegree] at hy
   exact (coprime_index base K M L N hc).trans hy
 
-theorem degree_dvd (base : H2) (kummer : H3) (K L : Type)
+theorem degree_dvd (base : H2) (kummer : ∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+   [FiniteDimensional D N][IsGalois D N],(Module.finrank D N).Prime →
+   (primitiveRoots (Module.finrank D N) D).Nonempty →
+   let A:=AdeleRing (𝓞 D) D
+   let T:=A⊗[D]N
+   ((Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=T))).range).index ∣ Module.finrank D N) (K L : Type)
     [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L] [FiniteDimensional K L]
     [IsGalois K L] [IsCyclic Gal(L/K)] : ((Units.map (algebraMap K (AdeleRing (𝓞 K) K)).toMonoidHom).range ⊔ (Units.map (Algebra.norm (AdeleRing (𝓞 K) K) (S:=(AdeleRing (𝓞 K) K) ⊗[K] L))).range).index ∣ Module.finrank K L := by
   induction he : Module.finrank K L using Nat.strong_induction_on generalizing K L with
@@ -360,7 +375,12 @@ theorem degree_dvd (base : H2) (kummer : H3) (K L : Type)
     rw [←he,←Module.finrank_mul_finrank K M L,Nat.mul_comm (Module.finrank K M)]
     exact Nat.mul_dvd_mul htop (hm ▸ hbase)
 
-theorem degree_bound (base : H2) (kummer : H3) :
+theorem degree_bound (base : H2) (kummer : ∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+   [FiniteDimensional D N][IsGalois D N],(Module.finrank D N).Prime →
+   (primitiveRoots (Module.finrank D N) D).Nonempty →
+   let A:=AdeleRing (𝓞 D) D
+   let T:=A⊗[D]N
+   ((Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=T))).range).index ∣ Module.finrank D N) :
   ∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
    [FiniteDimensional D N][IsGalois D N](g:Gal(N/D)),(∀ s,s∈Subgroup.zpowers g) →
    ((Units.map (algebraMap D (AdeleRing (𝓞 D) D)).toMonoidHom).range ⊔ (Units.map (Algebra.norm (AdeleRing (𝓞 D) D) (S:=(AdeleRing (𝓞 D) D) ⊗[D] N))).range).index ≤ Module.finrank D N := by
@@ -370,7 +390,20 @@ theorem degree_bound (base : H2) (kummer : H3) :
 
 theorem main : H1 → H2 → H3 → OMA.R_CongruentNumber_Tunnell_even_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H2_R1_H1_R1.H1 := by
   intro first base kummer
-  have second := degree_bound base kummer
+  have lower : (∀(D N:Type)[Field D][NumberField D][Field N][NumberField N][Algebra D N]
+    [FiniteDimensional D N][IsGalois D N][IsCyclic Gal(N/D)],
+    let A:=AdeleRing (𝓞 D) D
+    (Units.map (algebraMap D A).toMonoidHom).range ⊔ (Units.map (Algebra.norm A (S:=A⊗[D]N))).range=⊤ →
+    Module.finrank D N=1) := by
+    intro D N _ _ _ _ _ _ _ _
+    dsimp only
+    intro top
+    obtain ⟨g,hg⟩:=IsCyclic.exists_generator (α:=Gal(N/D))
+    obtain ⟨pos,eq⟩:=first D N g hg
+    dsimp only at eq
+    rw [top,Subgroup.index_top] at eq
+    exact le_antisymm ((Nat.le_mul_of_pos_right _ pos).trans_eq eq.symm) Module.finrank_pos
+  have second := degree_bound base (kummer lower)
   intro D N _ _ _ _ _ _ _ g gen
   obtain ⟨hk,he⟩ := first D N g gen
   have hle := second D N g gen

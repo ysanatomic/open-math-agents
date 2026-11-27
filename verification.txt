@@ -15,3 +15,16 @@ All five leanchecker invocations exited with code 0.
 
 Lean check started at 16:02:58 UTC
 'TunnellEvenExactStatement' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+Independent source rebuild completed on 2026-11-27 at 16:33 UTC.
+Source revision: 96ca8ab5c3722dfb396bac82abfd386f1654ac73
+Formal-conjectures revision: 9097e2f90e66d2f6244209cb1c07f7120d17ec53
+The build started with a separate empty output directory for all bundled modules.
+It resumed after restoring the 1,600,000-heartbeat allowance for the class field theory dependency.
+All 1,274 bundled modules compiled, the kernel replay succeeded, and the explicit statement compiled.
+The verifier exited with code 0. Its final output was
+
+Checked 1274/1274 modules
+replaying TunnellEvenOriginal
+'TunnellEvenExactStatement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TunnellEvenOriginal.tunnell_even' depends on axioms: [propext, Classical.choice, Quot.sound]
